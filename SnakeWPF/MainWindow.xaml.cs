@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -92,7 +93,25 @@ namespace SnakeWPF
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("Возникло исключение: " + ex.ToString() + "\n" + ex.Message);
+                Debug.WriteLine("Возникло исключение: " + ex.ToString() + "\n " + ex.Message);
+            }
+        }
+        public static void Send(string datagram)
+        {
+            UdpClient sender = new UdpClient();
+            IPEndPoint endPoint = new IPEndPoint(remoteIPAdress, remotePort);
+            try
+            {
+                byte[] bytes = Encoding.UTF8.GetBytes(datagram);
+                sender.Send(bytes, bytes.Length, endPoint);
+            }
+            catch ( Exception ex ) 
+            {
+                Debug.WriteLine("Возникло исключение: " + ex.Message + "\n " + ex.Message);
+            }
+            finally
+            {
+                sender.Close();
             }
         }
     }
