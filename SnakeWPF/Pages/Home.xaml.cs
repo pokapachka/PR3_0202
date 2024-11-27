@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -27,7 +28,7 @@ namespace SnakeWPF.Pages
         }
         private void StartGame(object sender, RoutedEventArgs e)
         {
-            if (MainWindow.mainWindow.receivingUdpClient! - null)
+            if (MainWindow.mainWindow.receivingUdpClient != null)
             {
                 MainWindow.mainWindow.receivingUdpClient.Close();
             }

@@ -91,7 +91,35 @@ namespace SnakeWPF.Pages
                             }
                         }
                     }
+                    Brush Color;
+                    if (iPoint == 0)
+                    {
+                        Color = new SolidColorBrush(System.Windows.Media.Color.FromArgb(255, 0, 127, 14));
+                    }
+                    else
+                    {
+                        Color = new SolidColorBrush(System.Windows.Media.Color.FromArgb(255, 0, 198, 19));
+                    }
+                    Ellipse ellipse = new Ellipse()
+                    {
+                        Width = 20,
+                        Height = 20,
+                        Margin = new Thickness(SnakePoint.X - 10, SnakePoint.Y - 10,0,0),
+                        Fill = Color,
+                        Stroke = Brushes.Black
+                    };
+                    canvas.Children.Add(ellipse);
                 }
+                ImageBrush myBrash = new ImageBrush();
+                myBrash.ImageSource = new BitmapImage(new Uri($"pack://application:,,,/Image/apple.png"));
+                Ellipse points = new Ellipse()
+                {
+                    Width = 40,
+                    Height = 40,
+                    Margin = new Thickness(MainWindow.mainWindow.ViewModelGames.Points.X - 20, MainWindow.mainWindow.ViewModelGames.Points.Y - 20,0,0),
+                    Fill = myBrash
+                };
+                canvas.Children.Add(points); 
             });
         }
     }
