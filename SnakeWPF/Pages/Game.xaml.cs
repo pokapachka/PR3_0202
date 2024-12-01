@@ -1,17 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Common;
 
 namespace SnakeWPF.Pages
 {
@@ -40,6 +33,7 @@ namespace SnakeWPF.Pages
                 canvas.Children.Clear();
                 for (int iPoint = MainWindow.mainWindow.ViewModelGames.SnakesPlayers.Points.Count - 1; iPoint >= 0; iPoint--)
                 {
+                    //snake point??
                     Snakes.Point NextSnakePoint = MainWindow.mainWindow.ViewModelGames.SnakesPlayers.Points[iPoint - 1];
                     if (SnakePoint.X > NextSnakePoint.X || SnakePoint.X < NextSnakePoint.X)
                     {

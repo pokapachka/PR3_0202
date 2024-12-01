@@ -1,17 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using Common;
 
 namespace SnakeWPF.Pages
 {
@@ -24,7 +13,7 @@ namespace SnakeWPF.Pages
         {
             InitializeComponent();
             name.Content = MainWindow.mainWindow.ViewModelUserSettings.Name;
-            top.Content = MainWindow.mainWindow.ViewModelUserSettings.Top;
+            top.Content = MainWindow.mainWindow.ViewModelGames.Top; //?
             glasses.Content = $"{MainWindow.mainWindow.ViewModelGames.SnakesPlayers.Points.Count - 3} glasses";
             MainWindow.mainWindow.receivingUdpClient.Close();
             MainWindow.mainWindow.tRec.Abort();
