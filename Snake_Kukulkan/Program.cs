@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using Common;
 using Newtonsoft.Json;
+using System.Threading;
 
 namespace Snake_Kukulkan
 {
@@ -15,13 +17,13 @@ namespace Snake_Kukulkan
         public static List<ViewModelGames> ViewModelGames = new List<ViewModelGames>();
         private static Int32 _localPort = 5001;
         public static Int32 MaxSpeed = 15;
-        private static void Send() 
+        private static void Send()
         {
-            foreach (ViewModelUserSettings User in RemoteIpAddresses) 
+            foreach (ViewModelUserSettings User in RemoteIpAddresses)
             {
                 UdpClient sender = new UdpClient();
                 IPEndPoint endPoint = new IPEndPoint(IPAddress.Parse(User.IPAddress), Int32.Parse(User.Port));
-                try 
+                try
                 {
                     Byte[] bytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(ViewModelGames.Find(x => x.IdSnake == User.IdSnake)));
                     sender.Send(bytes, bytes.Length, endPoint);
@@ -31,29 +33,29 @@ namespace Snake_Kukulkan
                 catch (Exception e)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine($"An exception occured in send method: {(e.Message.Length > 100 ? e.Message.Substring(0,100) : e.Message)}");
+                    Console.WriteLine($"An exception occured in send method: {(e.Message.Length > 100 ? e.Message.Substring(0, 100) : e.Message)}");
                 }
                 finally { sender.Close(); }
             }
         }
-        public static int AddSnake() 
+        public static int AddSnake()
         {
             ViewModelGames vmgPlayer = new ViewModelGames();
-            vmgPlayer.SnakesPlayers = new Snakes() 
+            vmgPlayer.SnakesPlayers = new Snakes()
             {
-                Points = new List<Snakes.Point> 
+                Points = new List<Snakes.Point>
                 {
                     new Snakes.Point(30, 10),
                     new Snakes.Point(20, 10),
                     new Snakes.Point(10, 10),
-                }, 
+                },
                 Direction = Snakes.DirectionType.Start
             };
             vmgPlayer.Points = new Snakes.Point(new Random().Next(10, 783), new Random().Next(10, 410));
             ViewModelGames.Add(vmgPlayer);
             return ViewModelGames.FindIndex(x => x == vmgPlayer);
         }
-        public static void Reciever() 
+        public static void Reciever()
         {
             UdpClient recievingUdpClient = new UdpClient(_localPort);
             IPEndPoint remoteIpEndPoint = null;
@@ -61,13 +63,13 @@ namespace Snake_Kukulkan
             {
                 Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine("Server initialized");
-                while (true) 
+                while (true)
                 {
                     Byte[] recievedBytes = recievingUdpClient.Receive(ref remoteIpEndPoint);
                     String recievedData = Encoding.UTF8.GetString(recievedBytes).Trim();
                     Console.ForegroundColor = ConsoleColor.Cyan;
                     Console.WriteLine($"Recieved data: {recievedData}");
-                    if (recievedData == String.Empty) 
+                    if (recievedData == String.Empty)
                     {
                         Console.ForegroundColor = ConsoleColor.Magenta;
                         Console.WriteLine($"Recieved data is empty");
@@ -106,7 +108,7 @@ namespace Snake_Kukulkan
                     {
                         Console.ForegroundColor = ConsoleColor.Gray;
                         Console.WriteLine("Processing the move command");
-                        try 
+                        try
                         {
                             ViewModelUserSettings vmus = JsonConvert.DeserializeObject<ViewModelUserSettings>(parts[1]);
                             Console.ForegroundColor = ConsoleColor.Blue;
@@ -114,7 +116,7 @@ namespace Snake_Kukulkan
                             Int32 PlayerId = RemoteIpAddresses.FindIndex(x => x.IPAddress == vmus.IPAddress);
                             if (PlayerId != -1)
                             {
-                                switch (parts[0]) 
+                                switch (parts[0])
                                 {
                                     case "Up":
                                         if (ViewModelGames[PlayerId].SnakesPlayers.Direction != Snakes.DirectionType.Down)
@@ -134,7 +136,7 @@ namespace Snake_Kukulkan
                                         break;
                                 }
                             }
-                            else 
+                            else
                             {
                                 Console.ForegroundColor = ConsoleColor.Magenta;
                                 Console.WriteLine($"Player with specified IP-address has not found");
@@ -143,29 +145,63 @@ namespace Snake_Kukulkan
                             Console.ForegroundColor = ConsoleColor.Green;
                             Console.WriteLine("Move command has been successfully processed");
                         }
-                        catch 
+                        catch
                         {
                             Console.ForegroundColor = ConsoleColor.Red;
                             Console.WriteLine("An exception occured in move command");
                             return;
                         }
                     }
-                    else 
+                    else
                     {
                         Console.ForegroundColor = ConsoleColor.Magenta;
                         Console.WriteLine($"Сommand cannot be processed, incoming command: {parts[0]}");
                     }
                 }
             }
-            catch (Exception e) 
+            catch (Exception e)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine($"An exception occured in reciever method: {(e.Message.Length > 100 ? e.Message.Substring(0, 100) : e.Message)}");
             }
         }
+        public static void Timer() { }
+        public static void SaveLeaders()
+        {
+            String json = JsonConvert.SerializeObject(Leaders);
+            StreamWriter sw = new StreamWriter("./leaders.txt");
+            sw.WriteLine(json);
+            sw.Close();
+        }
+        public static void LoadLeaders() 
+        {
+            if (File.Exists("./leaders.txt"))
+            {
+                StreamReader SR = new StreamReader("./leaders.txt");
+                String json = SR.ReadLine();
+                SR.Close();
+                if (!String.IsNullOrEmpty(json))
+                    Leaders = JsonConvert.DeserializeObject<List<Leaders>>(json);
+                else
+                    Leaders = new List<Leaders>();
+            }
+            else 
+                Leaders = new List<Leaders>();
+        }
         public static void Main(string[] args)
         {
-
+            try
+            {
+                Thread tRec = new Thread(new ThreadStart(Reciever));
+                tRec.Start();
+                Thread tTime = new Thread(new ThreadStart(Timer));
+                tTime.Start();
+            }
+            catch (Exception e)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($"An exception occured in main: {(e.Message.Length > 100 ? e.Message.Substring(0, 100) : e.Message)}");
+            }
         }
     }
 }
