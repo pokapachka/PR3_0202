@@ -33,58 +33,62 @@ namespace SnakeWPF.Pages
                 canvas.Children.Clear();
                 for (int iPoint = MainWindow.mainWindow.ViewModelGames.SnakesPlayers.Points.Count - 1; iPoint >= 0; iPoint--)
                 {
-                    //snake point??
-                    Snakes.Point NextSnakePoint = MainWindow.mainWindow.ViewModelGames.SnakesPlayers.Points[iPoint - 1];
-                    if (SnakePoint.X > NextSnakePoint.X || SnakePoint.X < NextSnakePoint.X)
+                    Snakes.Point SnakePoint = MainWindow.mainWindow.ViewModelGames.SnakesPlayers.Points[iPoint - 1];
+                    if (iPoint != 0)
                     {
-                        if (iPoint % 2 == 0)
+                        Snakes.Point NextSnakePoint = MainWindow.mainWindow.ViewModelGames.SnakesPlayers.Points[iPoint - 1];
+                        if (SnakePoint.X > NextSnakePoint.X || SnakePoint.X < NextSnakePoint.X)
                         {
-                            if (StepCadr % 2 == 0)
+                            if (iPoint % 2 == 0)
                             {
-                                SnakePoint.Y -= 1;
+                                if (StepCadr % 2 == 0)
+                                {
+                                    SnakePoint.Y -= 1;
+                                }
+                                else
+                                {
+                                    SnakePoint.Y += 1;
+                                }
                             }
                             else
                             {
-                                SnakePoint.Y += 1;
+                                if (StepCadr % 2 == 0)
+                                {
+                                    SnakePoint.Y += 1;
+                                }
+                                else
+                                {
+                                    SnakePoint.Y -= 1;
+                                }
                             }
                         }
-                        else
+                        else if (SnakePoint.Y > NextSnakePoint.Y || SnakePoint.Y < NextSnakePoint.Y)
                         {
-                            if (StepCadr % 2 == 0)
+                            if (iPoint % 2 == 0)
                             {
-                                SnakePoint.Y += 1;
+                                if (StepCadr % 2 == 0)
+                                {
+                                    SnakePoint.X -= 1;
+                                }
+                                else
+                                {
+                                    SnakePoint.X += 1;
+                                }
                             }
                             else
                             {
-                                SnakePoint.Y -= 1;
+                                if (StepCadr % 2 == 0)
+                                {
+                                    SnakePoint.X += 1;
+                                }
+                                else
+                                {
+                                    SnakePoint.X -= 1;
+                                }
                             }
                         }
                     }
-                    else if (SnakePoint.Y > NextSnakePoint.Y || SnakePoint.Y < NextSnakePoint.Y)
-                    {
-                        if (iPoint % 2 == 0)
-                        {
-                            if (StepCadr % 2 == 0)
-                            {
-                                SnakePoint.X -= 1;
-                            }
-                            else
-                            {
-                                SnakePoint.X += 1;
-                            }
-                        }
-                        else
-                        {
-                            if (StepCadr % 2 == 0)
-                            {
-                                SnakePoint.X += 1;
-                            }
-                            else
-                            {
-                                SnakePoint.X -= 1;
-                            }
-                        }
-                    }
+                    
                     Brush Color;
                     if (iPoint == 0)
                     {
