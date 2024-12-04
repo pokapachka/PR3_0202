@@ -4,7 +4,7 @@ namespace Common
 {
     public class Leaders
     {
-        public String Name { get; set; }
-        public Int32 Score { get; set; }
+        public string Name { get; set; }
+        public int Points { get; set; }
     }
 }
